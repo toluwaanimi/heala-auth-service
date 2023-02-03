@@ -1,55 +1,28 @@
-name: CICD for Youtube
+name: Deploy to Remote Server
 
 on:
   push:
     branches:
       - main
 
+env:
+  SSH_HOST: myserver.com
+  SSH_PORT: 22
+  SSH_USER: deploy
+
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [14.x]
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Use node js
-        uses: actions/setup-node@v1
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup SSH
+        uses: shimataro/setup-ssh-action@v1
         with:
-          node-version: ${{ matrix.node-version }}
-      - name: npm install and build
+          ssh-private-key: ${{ secrets.KEY }}
+
+      - name: SSH to Remote Server
         run: |
-          npm install
-          npm run build
-
-        env:
-          CI: true
-
-
-  depoly:
-    needs: [build]
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: SSH deploy
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username:  ${{ secrets.USER }}
-          key:  ${{ secrets.KEY }}
-          port:  ${{ secrets.PORT }}
-          script: |
-            curl -o-   https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh    | bash
-            . ~/.nvm/nvm.sh
-            
-             nvm instal 16
-             npm install -g pm2
-             cd ./heala-auth-service
-             git pull origin main
-             npm install
-             npm run build
-             pm2 restart auth-service
-            
-
-
+          ssh -p ${{ env.PORT }} ${{ env.USER }}@${{ env.HOST }}
