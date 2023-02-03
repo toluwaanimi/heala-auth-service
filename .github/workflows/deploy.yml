@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  DOCKER_REGISTRY: henadad/heala-auth
+  DOCKER_REGISTRY: docker.io
   DOCKER_IMAGE: health-auth
   IMAGE_TAG: ${{ github.sha }}
 
