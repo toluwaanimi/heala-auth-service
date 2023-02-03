@@ -1,40 +1,55 @@
-name: Deploy to Docker Registry
+name: CICD for Youtube
 
 on:
   push:
     branches:
       - main
 
-env:
-  DOCKER_REGISTRY: docker.io
-  DOCKER_IMAGE: health-auth
-  TAG_NAME: ${{ github.sha }}
-
-
 jobs:
-  deploy:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use node js
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: npm install and build
+        run: |
+          npm install
+          npm run build
+
+        env:
+          CI: true
+
+
+  depoly:
+    needs: [build]
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Build Docker Image
-        uses: docker/build-push-action@v2
+      - name: SSH deploy
+        uses: appleboy/ssh-action@master
         with:
-          context: .
-          push: true
-          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_IMAGE }}:${{ env.TAG_NAME }}
+          host: ${{ secrets.HOST }}
+          username:  ${{ secrets.USER }}
+          key:  ${{ secrets.KEY }}
+          port:  ${{ secrets.PORT }}
+          script: |
+            curl -o-   https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh    | bash
+            . ~/.nvm/nvm.sh
+            
+             nvm instal 16
+             npm install -g pm2
+             cd ./heala-auth-service
+             git pull origin main
+             npm install
+             npm run build
+             pm2 restart auth-service
+            
 
-      - name: Login to Docker registry
-        uses: docker/login-action@v1
-        with:
-          registry: ${{ env.DOCKER_REGISTRY }}
-          username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
-          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
-
-      - name: Push Docker Image
-        uses: docker/push-action@v1
-        with:
-          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_IMAGE }}:${{ env.TAG_NAME }}
 
