@@ -1,36 +1,26 @@
+name: Deploy to EC2 instance using SSH
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - master
 
 jobs:
-  #First we will see the application build or not , then we will deploy in EC2
-  build:
+  deploy:
     runs-on: ubuntu-latest
-    
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v2
-
-
-  Deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    
-    steps:
-      - uses: actions/checkout@v2
-      - name: Deploy in EC2
-        env:
-          PRIVATE_KEY: ${{ secrets.KEY  }}
-          HOSTNAME : ${{ secrets.HOST  }}
-          USER_NAME : ${{ secrets.USER  }}
-
+      - name: Deploy to AWS
         run: |
-          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-          
-            #Now we have got the access of EC2 and we will start the deploy .
+          echo "Deploying to AWS"
+          echo "${{ secrets.KEY }}" >> crag.cer && chmod 600 cragpay-core-kp.cer
+          ssh -o StrictHostKeyChecking=no -i crag.cer ${{ secrets.USER }}@${{ secrets.HOST }} '
+            # now we are in the EC2 instance
             cd ./heala-auth-service &&
-            git pull origin main && 
+            git pull origin main &&
             npm install &&
             npm run build &&
             pm2 restart api
+
+          '
+          echo "Deployment complete"
