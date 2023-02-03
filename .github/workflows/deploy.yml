@@ -20,9 +20,5 @@ jobs:
           echo "$PRIVATE_KEY" > id_rsa
           chmod 400 id_rsa
           echo "#!/bin/sh\n\nssh -o StrictHostKeyChecking=no -i id_rsa $USER@$HOST" > ssh-into-ec2.sh && chmod +x ssh-into-ec2.sh
-            cd ./heala-auth-service
-            git pull origin main
-            pm2 restart auth-service
-            exit
-          EOF
-          echo $?
+            echo ls
+
