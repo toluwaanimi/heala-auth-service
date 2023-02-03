@@ -15,16 +15,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: SSH into EC2
-        uses: actions/upload-artifact@v2
-        with:
-          name: ssh-into-ec2
-          path: ssh-into-ec2.sh
+      - name: Setup SSH script
+        run: |
+          echo "$PRIVATE_KEY" > id_rsa
+          chmod 400 id_rsa
+          echo "#!/bin/sh\n\nssh -o StrictHostKeyChecking=no -i id_rsa $USER@$HOST" > ssh-into-ec2.sh
+          chmod +x ssh-into-ec2.sh
 
       - name: Run SSH script
-        uses: actions/download-artifact@v2
-        with:
-          name: ssh-into-ec2
-        run: |
-          chmod +x ssh-into-ec2.sh
-          ./ssh-into-ec2.sh
+        run: ./ssh-into-ec2.sh
