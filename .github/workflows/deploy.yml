@@ -3,7 +3,7 @@ name: Deploy to EC2 instance using SSH
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   deploy:
