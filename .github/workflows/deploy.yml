@@ -18,11 +18,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Setup SSH
-        uses: shimataro/setup-ssh-action@v1
+      - name: SSH deploy
+        uses: appleboy/ssh-action@master
         with:
-          ssh-private-key: ${{ secrets.KEY }}
-
-      - name: SSH to Remote Server
-        run: |
-          ssh -p ${{ env.PORT }} ${{ env.USER }}@${{ env.HOST }}
+          host: ${{ secrets.HOST }}
+          username:  ${{ secrets.USER }}
+          key:  ${{ secrets.KEY }}
+          port:  ${{ secrets.PORT }}
