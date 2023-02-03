@@ -1,27 +1,15 @@
-name: Deploy to Remote Server
-
+name: Build & Deploy
 on:
   push:
-    branches:
-      - main
-
-env:
-  SSH_HOST: myserver.com
-  SSH_PORT: 22
-  SSH_USER: deploy
+    branches: [main]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: SSH deploy
-        uses: appleboy/ssh-action@master
+      - name: Deploy NodeJS app
+        uses: appleboy/ssh-action@v0.1.2
         with:
-          host: ${{ secrets.HOST }}
-          username:  ${{ secrets.USER }}
-          key:  ${{ secrets.KEY }}
-          port:  ${{ secrets.PORT }}
+          host: ${{secrets.HOST}} # IP address of the server you wish to ssh into
+          key: ${{secrets.KEY}} # Private or public key of the server
+          username: ${{ secrets.USER }} # User of the server you want to ssh into
