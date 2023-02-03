@@ -16,6 +16,10 @@ jobs:
           echo "${{ secrets.KEY }}" >> crag.cer && chmod 600 crag.cer
           ssh -o StrictHostKeyChecking=no -i crag.cer ${{ secrets.USER }}@${{ secrets.HOST }} '
             # now we are in the EC2 instance
+          curl -o-   https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh    | bash
+              . ~/.nvm/nvm.sh &&
+            nvm install 16 &&
+            npm install -g pm2 &&
             cd ./heala-auth-service &&
             git pull origin main &&
             npm install &&
