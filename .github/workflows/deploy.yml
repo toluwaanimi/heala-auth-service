@@ -6,9 +6,21 @@ on:
       - main
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build Docker Image
+        run: |
+          docker build -t heala:${{ github.sha}} .
+          docker tag heala:${{ github.sha }} heala:latest
+
+  deploy:
+    needs: [build]
+    runs-on: ubuntu-latest
     steps:
       - name: Deploy to AWS
         run: |
