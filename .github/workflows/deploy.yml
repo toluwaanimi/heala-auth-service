@@ -5,7 +5,7 @@ on: push
 env:
   PRIVATE_KEY: ${{ secrets.KEY }}
   USER: ubuntu
-  HOST: ${{ secrets.HOST }
+  HOST: ${{ secrets.HOST }}
 
 jobs:
   ssh:
@@ -25,4 +25,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: ssh-into-ec2
-        run: chmod +x ssh-into-ec2.sh && ./ssh-into-ec2.sh
+        run: |
+          chmod +x ssh-into-ec2.sh
+          ./ssh-into-ec2.sh
