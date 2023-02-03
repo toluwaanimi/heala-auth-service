@@ -22,9 +22,11 @@ jobs:
           echo "#!/bin/sh\n\nssh -o StrictHostKeyChecking=no -i id_rsa $USER@$HOST" > ssh-into-ec2.sh && chmod +x ssh-into-ec2.sh
 
       - name: Run SSH script
-        run: ./ssh-into-ec2.sh <<EOF
-          cd ./heala-auth-service
-          git pull origin main
-          pm2 restart auth-service
-          exit
-  EOF
+        run: |
+          ./ssh-into-ec2.sh <<EOF
+            cd ./heala-auth-service
+            git pull origin main
+            pm2 restart auth-service
+            exit
+          EOF
+          echo $?
