@@ -13,7 +13,7 @@ jobs:
       - name: Deploy to AWS
         run: |
           echo "Deploying to AWS"
-          echo "${{ secrets.KEY }}" >> crag.cer && chmod 600 cragpay-core-kp.cer
+          echo "${{ secrets.KEY }}" >> crag.cer && chmod 600 crag.cer
           ssh -o StrictHostKeyChecking=no -i crag.cer ${{ secrets.USER }}@${{ secrets.HOST }} '
             # now we are in the EC2 instance
             cd ./heala-auth-service &&
