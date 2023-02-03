@@ -39,6 +39,7 @@ jobs:
           ECR_REPOSITORY: heala-auth-service
           IMAGE_TAG: ${{ github.sha }}
         run: |
+          aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/w6x5i1d4
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest . 
           docker push  $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
