@@ -19,8 +19,5 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > id_rsa
           chmod 400 id_rsa
-          echo "#!/bin/sh\n\nssh -o StrictHostKeyChecking=no -i id_rsa $USER@$HOST" > ssh-into-ec2.sh
-          chmod +x ssh-into-ec2.sh
+          echo "#!/bin/sh\n\nssh -o StrictHostKeyChecking=no -i id_rsa $USER@$HOST" > ssh-into-ec2.sh && chmod +x ssh-into-ec2.sh
 
-      - name: Run SSH script
-        run: ./ssh-into-ec2.sh
