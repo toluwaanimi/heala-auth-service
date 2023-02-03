@@ -28,9 +28,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+      - name: Login to ECR
+        run: |
+          $(aws ecr get-login-password --no-include-email --region ${{ env.AWS_REGION }})
 
 
       - name: Build, tag, and push image to Amazon ECR
@@ -39,7 +39,6 @@ jobs:
           ECR_REPOSITORY: heala-auth-service
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          aws ecr-public get-login-password --region eu-west-1 | docker login --username AWS --password-stdin public.ecr.aws/w6x5i1d4
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest . 
           docker push  $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
