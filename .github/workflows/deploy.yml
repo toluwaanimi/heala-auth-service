@@ -8,7 +8,8 @@ on:
 env:
   DOCKER_REGISTRY: docker.io
   DOCKER_IMAGE: health-auth
-  IMAGE_TAG: ${{ github.sha }}
+  TAG_NAME: ${{ github.sha }}
+
 
 jobs:
   deploy:
@@ -23,7 +24,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_IMAGE }}:${{ env.IMAGE_TAG }}
+          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_IMAGE }}:${{ env.TAG_NAME }}
 
       - name: Login to Docker registry
         uses: docker/login-action@v1
@@ -32,4 +33,8 @@ jobs:
           username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
           password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
 
+      - name: Push Docker Image
+        uses: docker/push-action@v1
+        with:
+          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.DOCKER_IMAGE }}:${{ env.TAG_NAME }}
 
